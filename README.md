@@ -4,7 +4,7 @@
 This sample shows how to add a custom recognizer to a Bot Composer empty bot in order to use [Azure Question Answering](https://azure.microsoft.com/en-us/products/cognitive-services/question-answering/) (instead of using QnA Maker). It has not been exhaustively tested but demonstrates how a custom trigger in Composer works and this solution may need additional refinement. (also see the limitations section below)
 
 ## Quickstart
-[This commit](https://github.com/negativeeddy/CustomQuestionAnsweringBotSample/commit/5b5e1627d9e5621166185ce1f762a3d59a2f4cdd) shows the changes necessary to apply to a bot.
+(https://github.com/negativeeddy/CustomQuestionAnsweringBotSample/commit/5b5e1627d9e5621166185ce1f762a3d59a2f4cdd) shows the changes necessary to apply to a bot.
 1. Add the custom recognizer class to the bot solution
 2. Register the recognizer in the startup
 3. Change the root dialog's recognizer type to custom
@@ -14,6 +14,7 @@ This sample shows how to add a custom recognizer to a Bot Composer empty bot in 
 Because the Question Answering recognizer is a modified version of the existing QnAMaker recognizer, the workflow elements (such as multi turn) work the same. In addition the same QnAMaker events and telemetry are written out to the logs.
 
 ## Limitations
+
 * Composer does not integrate natively with Question Answering so managing the question/answer pairs must be done in the language portal instead of Composer.
 * This solution does not cross train with LUIS. If using LUIS, as shown here, the LUIS intents must also now be managed in the LUIS portal and not through Composer.
 * Testing must be done to check that the Question Answering score and LUIS scores are comparable. Even though they both score 0-1.0, the score values don't necessarily correlate across different services.
