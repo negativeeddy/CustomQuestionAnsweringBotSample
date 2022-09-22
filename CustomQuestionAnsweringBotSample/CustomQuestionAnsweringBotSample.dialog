@@ -63,9 +63,128 @@
           "activity": "${SendActivity_DidNotUnderstand()}"
         }
       ]
+    },
+    {
+      "$kind": "Microsoft.OnQnAMatch",
+      "$designer": {
+        "id": "rqWEgN",
+        "name": "QnA Intent recognized"
+      },
+      "actions": [
+        {
+          "$kind": "Microsoft.IfCondition",
+          "$designer": {
+            "id": "9kXDxj"
+          },
+          "condition": "count(turn.recognized.answers[0].context.prompts) > 0",
+          "actions": [
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "kYehiM"
+              },
+              "property": "dialog.qnaContext",
+              "value": "=turn.recognized.answers[0].context.prompts"
+            },
+            {
+              "$kind": "Microsoft.TextInput",
+              "$designer": {
+                "id": "FaYNdj"
+              },
+              "maxTurnCount": 3,
+              "alwaysPrompt": true,
+              "allowInterruptions": false,
+              "prompt": "${TextInput_Prompt_nuzWAt()}",
+              "property": "turn.qnaMultiTurnResponse"
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "SKJQ99"
+              },
+              "property": "turn.qnaMatchFromContext",
+              "value": "=where(dialog.qnaContext, item, item.displayText == turn.qnaMultiTurnResponse)"
+            },
+            {
+              "$kind": "Microsoft.DeleteProperty",
+              "$designer": {
+                "id": "Rob7Lj"
+              },
+              "property": "dialog.qnaContext"
+            },
+            {
+              "$kind": "Microsoft.IfCondition",
+              "$designer": {
+                "id": "341Miu"
+              },
+              "condition": "turn.qnaMatchFromContext && count(turn.qnaMatchFromContext) > 0",
+              "actions": [
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "KDCpyl"
+                  },
+                  "property": "turn.qnaIdFromPrompt",
+                  "value": "=turn.qnaMatchFromContext[0].qnaId"
+                }
+              ]
+            },
+            {
+              "$kind": "Microsoft.EmitEvent",
+              "$designer": {
+                "id": "KvtURz"
+              },
+              "eventName": "activityReceived",
+              "eventValue": "=turn.activity"
+            }
+          ],
+          "elseActions": [
+            {
+              "$kind": "Microsoft.SendActivity",
+              "$designer": {
+                "id": "vrBTNt"
+              },
+              "activity": "${SendActivity_UR5VfV()}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "$kind": "Microsoft.OnIntent",
+      "$designer": {
+        "id": "B0Tyr6",
+        "name": "HelloIntent"
+      },
+      "intent": "HelloIntent",
+      "actions": [
+        {
+          "$kind": "Microsoft.SendActivity",
+          "$designer": {
+            "id": "xwZXBp"
+          },
+          "activity": "${SendActivity_xwZXBp()}"
+        }
+      ]
     }
   ],
   "generator": "CustomQuestionAnsweringBotSample.lg",
   "id": "CustomQuestionAnsweringBotSample",
-  "recognizer": "CustomQuestionAnsweringBotSample.lu.qna"
+  "recognizer": {
+    "$kind": "Microsoft.RecognizerSet",
+    "recognizers": [
+      {
+        "$kind": "Microsoft.LuisRecognizer",
+        "applicationId": "${settings.CustomLuis.applicationId}",
+        "endpoint": "${settings.CustomLuis.endpoint}",
+        "endpointKey": "${settings.CustomLuis.endpointKey}"
+      },
+      {
+        "$kind": "CustomQuestionAnsweringBotSample.CustomQuestionAnsweringRecognizer",
+        "hostname": "${settings.CustomQuestionAnswering.hostname}",
+        "projectName": "${settings.CustomQuestionAnswering.projectName}",
+        "endpointKey": "${settings.CustomQuestionAnswering.endpointKey}"
+      }
+    ]
+  }
 }

@@ -15,3 +15,19 @@
 
 # SendActivity_DidNotUnderstand_text()
 - Sorry, I didn't get that.
+# TextInput_Prompt_nuzWAt()
+[Activity
+    Text = ${expandText(@answer)}
+    SuggestedActions = ${foreach(turn.recognized.answers[0].context.prompts, x, x.displayText)}
+]
+
+# SendActivity_UR5VfV()
+- ${expandText(@answer)}
+
+# SendActivity_xwZXBp()
+[Activity
+    Text = ${SendActivity_xwZXBp_text()}
+]
+
+# SendActivity_xwZXBp_text()
+- Hi
