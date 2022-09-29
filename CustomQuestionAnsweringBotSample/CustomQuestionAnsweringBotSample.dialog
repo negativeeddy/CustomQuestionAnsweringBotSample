@@ -174,10 +174,11 @@
     "$kind": "Microsoft.RecognizerSet",
     "recognizers": [
       {
-        "$kind": "Microsoft.LuisRecognizer",
-        "applicationId": "${settings.CustomLuis.applicationId}",
-        "endpoint": "${settings.CustomLuis.endpoint}",
-        "endpointKey": "${settings.CustomLuis.endpointKey}"
+        "$kind": "CustomQuestionAnsweringBotSample.CluAdaptiveRecognizer",
+        "applicationId": "${settings.Clu.projectName}",
+        "endpoint": "${settings.Clu.endpoint}",
+        "endpointKey": "${settings.Clu.endpointKey}",
+        "deploymentName": "${settings.Clu.deploymentName}"
       },
       {
         "$kind": "CustomQuestionAnsweringBotSample.CustomQuestionAnsweringRecognizer",

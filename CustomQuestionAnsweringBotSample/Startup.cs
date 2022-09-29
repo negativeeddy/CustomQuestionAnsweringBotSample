@@ -1,3 +1,4 @@
+using CustomQuestionAnsweringBotSample.LanguageUnderstanding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
@@ -27,6 +28,7 @@ namespace CustomQuestionAnsweringBotSample
             });
 
             services.AddSingleton<DeclarativeType>((sp) => new DeclarativeType<CustomQuestionAnsweringRecognizer>(CustomQuestionAnsweringRecognizer.Kind));
+            services.AddSingleton<DeclarativeType>((sp) => new DeclarativeType<CluAdaptiveRecognizer>(CluAdaptiveRecognizer.Kind));
 
             services.AddBotRuntime(Configuration);
         }
