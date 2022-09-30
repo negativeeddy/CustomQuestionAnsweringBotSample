@@ -73,13 +73,6 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         public CluRecognizerOptions Options { get; set; }
 
         /// <summary>
-        /// Gets or sets HTTP client handler.
-        /// </summary>
-        /// <value>HTTP client handler.</value>
-        [JsonIgnore]
-        public HttpClientHandler HttpClient { get; set; }
-
-        /// <summary>
         /// Gets or sets the flag to determine if personal information should be logged in telemetry.
         /// </summary>
         /// <value>
@@ -91,22 +84,24 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         /// <inheritdoc/>
         public override async Task<RecognizerResult> RecognizeAsync(DialogContext dialogContext, Activity activity, CancellationToken cancellationToken = default, Dictionary<string, string> telemetryProperties = null, Dictionary<string, double> telemetryMetrics = null)
         {
-            var recognizer = new CluRecognizer(RecognizerOptions(dialogContext));
+            var project = new CluProjectSettings(
+                ApplicationId.GetValue(dialogContext.State), 
+                DeploymentName.GetValue(dialogContext.State), 
+                EndpointKey.GetValue(dialogContext.State), 
+                Endpoint.GetValue(dialogContext.State));
 
-            RecognizerResult result = await recognizer.RecognizeAsync(dialogContext, activity, cancellationToken).ConfigureAwait(false);
-
-            TrackRecognizerResult(dialogContext, "LuisResult", FillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext), telemetryMetrics);
-
-            return result;
-        }
-
-        public CluRecognizerOptions RecognizerOptions(DialogContext dialogContext)
-        {
-            var application = new CluApplication(ApplicationId.GetValue(dialogContext.State), DeploymentName.GetValue(dialogContext.State), EndpointKey.GetValue(dialogContext.State), Endpoint.GetValue(dialogContext.State));
-            return new CluRecognizerOptions(application)
+            var recognizerOptions = new CluRecognizerOptions()
             {
                 TelemetryClient = TelemetryClient,
             };
+
+            var recognizer = new CluRecognizer(recognizerOptions, project);
+
+            RecognizerResult result = await recognizer.RecognizeAsync(dialogContext, activity, cancellationToken).ConfigureAwait(false);
+
+            TrackRecognizerResult(dialogContext, "CLUResult", FillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext), telemetryMetrics);
+
+            return result;
         }
 
         /// <summary>

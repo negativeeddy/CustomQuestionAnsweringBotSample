@@ -19,15 +19,9 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         /// <summary>
         /// Creates an instance of  <see cref="CluRecognizerOptions"/> containing the CLU Application as well as optional configurations.
         /// </summary>
-        public CluRecognizerOptions(CluApplication application)
+        public CluRecognizerOptions()
         {
-            Application = application ?? throw new ArgumentNullException(nameof(application));
         }
-
-        /// <summary>
-        /// An instance of the <see cref="Application"/> class containing connection details for your CLU application.
-        /// </summary>
-        public CluApplication Application { get; }
 
         /// <summary>
         /// If true, the query will be kept by the service for customers to further review, to improve the model quality.

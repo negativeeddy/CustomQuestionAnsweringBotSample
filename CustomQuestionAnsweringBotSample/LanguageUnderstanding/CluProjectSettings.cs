@@ -5,21 +5,21 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
     /// <summary>
     /// Data describing a CLU application.
     /// </summary>
-    public class CluApplication
+    public class CluProjectSettings
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CluApplication"/> class.
+        /// Initializes a new instance of the <see cref="CluProjectSettings"/> class.
         /// </summary>
         /// <param name="projectName">CLU project name.</param>
         /// <param name="deploymentName">CLU model deployment name.</param>
         /// <param name="endpointKey">CLU subscription or endpoint key.</param>
         /// <param name="endpoint">CLU endpoint to use like https://mytextanalyticsresource.cognitive.azure.com.</param>
-        public CluApplication(string projectName, string deploymentName, string endpointKey, string endpoint)
+        public CluProjectSettings(string projectName, string deploymentName, string endpointKey, string endpoint)
             : this((projectName, deploymentName, endpointKey, endpoint))
         {
         }
 
-        private CluApplication(ValueTuple<string, string, string, string> props)
+        private CluProjectSettings(ValueTuple<string, string, string, string> props)
         {
             var (projectName, deploymentName, endpointKey, endpoint) = props;
 

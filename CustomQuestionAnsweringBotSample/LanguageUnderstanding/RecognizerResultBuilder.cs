@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
 {
@@ -43,10 +44,11 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         {
         };
 
-        public static RecognizerResult BuildRecognizerResultFromCluResponse(Stream cluResultStream, string utterance)
+        public static async Task<RecognizerResult> BuildRecognizerResultFromCluResponse(Stream cluResultStream, string utterance)
         {
-            var cluResponse = System.Text.Json.JsonSerializer.DeserializeAsync<AnalyzeConversationResult>(cluResultStream);
-            var cluResult = cluResponse.Result.result;
+            var cluResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<AnalyzeConversationResult>(cluResultStream);
+            var cluResult = cluResponse.result;
+
             var recognizerResult = new RecognizerResult
             {
                 Text = utterance,
@@ -55,9 +57,6 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
 
             // CLU Projects can be Conversation projects (LuisVNext) or Orchestration projects that
             // can retrieve responses from other types of projects (Question answering, LUIS or Conversations)
-            //using JsonDocument result = JsonDocument.Parse(cluResultStream);
-            //JsonElement conversationalTaskResult = result.RootElement;
-            //JsonElement conversationPrediction = conversationalTaskResult.GetProperty("result").GetProperty("prediction");
             var projectKind = cluResult.prediction.projectKind;
 
             if (projectKind == "Conversation")
@@ -194,7 +193,7 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
             return returnedObject;
         }
 
-        private static void AddProperties(CluResult conversationResult, RecognizerResult result)
+        private static void AddProperties(ConversationResult conversationResult, RecognizerResult result)
         {
             var topIntent = conversationResult.prediction.topIntent;
             var projectKind = conversationResult.prediction.projectKind;

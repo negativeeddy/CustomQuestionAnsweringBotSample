@@ -1,18 +1,21 @@
 ﻿namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
 {
-    public class ConversationAnalyzeRequest
+    // Classes for serializing the body of the CLU Http request
+    // defined at https://learn.microsoft.com/en-us/rest/api/language/conversation-analysis-runtime/analyze-conversation
+
+    public class ConversationalTask
     {
         public string kind { get; set; }
-        public Analysisinput analysisInput { get; set; }
-        public Parameters parameters { get; set; }
+        public ConversationAnalysisOptions analysisInput { get; set; }
+        public ConversationTaskParameters parameters { get; set; }
     }
 
-    public class Analysisinput
+    public class ConversationAnalysisOptions
     {
-        public Conversationitem conversationItem { get; set; }
+        public ConversationItemBase conversationItem { get; set; }
     }
 
-    public class Conversationitem
+    public class ConversationItemBase
     {
         public string id { get; set; }
         public string participantId { get; set; }
@@ -20,7 +23,7 @@
         public string language { get; set; }
     }
 
-    public class Parameters
+    public class ConversationTaskParameters
     {
         public string projectName { get; set; }
         public string deploymentName { get; set; }
