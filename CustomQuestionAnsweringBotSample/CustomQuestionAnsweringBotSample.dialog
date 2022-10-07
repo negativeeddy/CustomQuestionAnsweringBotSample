@@ -135,7 +135,8 @@
                 "id": "KvtURz"
               },
               "eventName": "activityReceived",
-              "eventValue": "=turn.activity"
+              "eventValue": "=turn.activity",
+              "handledProperty": "turn.eventHandled"
             }
           ],
           "elseActions": [
@@ -171,21 +172,20 @@
   "generator": "CustomQuestionAnsweringBotSample.lg",
   "id": "CustomQuestionAnsweringBotSample",
   "recognizer": {
-    "$kind": "Microsoft.RecognizerSet",
-    "recognizers": [
-      {
-        "$kind": "CustomQuestionAnsweringBotSample.CluAdaptiveRecognizer",
-        "applicationId": "${settings.Clu.projectName}",
-        "endpoint": "${settings.Clu.endpoint}",
-        "endpointKey": "${settings.Clu.endpointKey}",
-        "deploymentName": "${settings.Clu.deploymentName}"
-      },
-      {
-        "$kind": "CustomQuestionAnsweringBotSample.CustomQuestionAnsweringRecognizer",
-        "hostname": "${settings.CustomQuestionAnswering.hostname}",
-        "projectName": "${settings.CustomQuestionAnswering.projectName}",
-        "endpointKey": "${settings.CustomQuestionAnswering.endpointKey}"
-      }
-    ]
+    "$kind": "CustomQuestionAnsweringBotSample.CluAdaptiveRecognizer",
+    "projectName": "${settings.Clu.projectName}",
+    "endpoint": "${settings.Clu.endpoint}",
+    "endpointKey": "${settings.Clu.endpointKey}",
+    "projectType": "${settings.Clu.projectType}", // "CLU" (default) or "Orchestration"
+    "deploymentName": "${settings.Clu.deploymentName}"
   }
-}
+
+  //"recognizer": {
+  //  {
+  //    "$kind": "CustomQuestionAnsweringBotSample.CustomQuestionAnsweringRecognizer",
+  //    "hostname": "${settings.CustomQuestionAnswering.hostname}",
+  //    "projectName": "${settings.CustomQuestionAnswering.projectName}",
+  //    "endpointKey": "${settings.CustomQuestionAnswering.endpointKey}"
+  //  }
+
+  }

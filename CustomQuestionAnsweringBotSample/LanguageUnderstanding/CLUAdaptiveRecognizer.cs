@@ -38,8 +38,8 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         /// Gets or sets LUIS application ID.
         /// </summary>
         /// <value>Application ID.</value>
-        [JsonProperty("applicationId")]
-        public StringExpression ApplicationId { get; set; }
+        [JsonProperty("projectName")]
+        public StringExpression ProjectName { get; set; }
 
         /// <summary>
         /// Gets or sets LUIS version.
@@ -65,6 +65,9 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         [JsonProperty("endpointKey")]
         public StringExpression EndpointKey { get; set; }
 
+        [JsonProperty("projectType")]
+        public StringExpression ProjectType { get; set; } = CluProjectSettings.ProjectType_CLU;
+
         /// <summary>
         /// Gets or sets LUIS Prediction options (with expressions).
         /// </summary>
@@ -85,10 +88,11 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         public override async Task<RecognizerResult> RecognizeAsync(DialogContext dialogContext, Activity activity, CancellationToken cancellationToken = default, Dictionary<string, string> telemetryProperties = null, Dictionary<string, double> telemetryMetrics = null)
         {
             var project = new CluProjectSettings(
-                ApplicationId.GetValue(dialogContext.State), 
+                ProjectName.GetValue(dialogContext.State), 
                 DeploymentName.GetValue(dialogContext.State), 
                 EndpointKey.GetValue(dialogContext.State), 
-                Endpoint.GetValue(dialogContext.State));
+                Endpoint.GetValue(dialogContext.State),
+                ProjectType.GetValue(dialogContext.State));
 
             var recognizerOptions = new CluRecognizerOptions()
             {
@@ -115,14 +119,14 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         protected override Dictionary<string, string> FillRecognizerResultTelemetryProperties(RecognizerResult recognizerResult, Dictionary<string, string> telemetryProperties, DialogContext dc)
         {
             var (logPersonalInfo, error) = this.LogPersonalInformation.TryGetValue(dc.State);
-            var (applicationId, error2) = this.ApplicationId.TryGetValue(dc.State);
+            var (projectName, error2) = this.ProjectName.TryGetValue(dc.State);
 
             var topTwoIntents = (recognizerResult.Intents.Count > 0) ? recognizerResult.Intents.OrderByDescending(x => x.Value.Score).Take(2).ToArray() : null;
 
             // Add the intent score and conversation id properties
             var properties = new Dictionary<string, string>()
             {
-                { LuisTelemetryConstants.ApplicationIdProperty, applicationId },
+                { LuisTelemetryConstants.ApplicationIdProperty, projectName },
                 { LuisTelemetryConstants.IntentProperty, topTwoIntents?[0].Key ?? string.Empty },
                 { LuisTelemetryConstants.IntentScoreProperty, topTwoIntents?[0].Value.Score?.ToString("N2", CultureInfo.InvariantCulture) ?? "0.00" },
                 { LuisTelemetryConstants.Intent2Property, (topTwoIntents?.Length > 1) ? topTwoIntents?[1].Key ?? string.Empty : string.Empty },

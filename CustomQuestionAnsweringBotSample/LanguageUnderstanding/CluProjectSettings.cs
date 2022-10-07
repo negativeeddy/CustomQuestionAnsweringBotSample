@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Bot.Builder.AI.QnA.Models;
+using System;
 
 namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
 {
@@ -14,14 +15,14 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         /// <param name="deploymentName">CLU model deployment name.</param>
         /// <param name="endpointKey">CLU subscription or endpoint key.</param>
         /// <param name="endpoint">CLU endpoint to use like https://mytextanalyticsresource.cognitive.azure.com.</param>
-        public CluProjectSettings(string projectName, string deploymentName, string endpointKey, string endpoint)
-            : this((projectName, deploymentName, endpointKey, endpoint))
+        public CluProjectSettings(string projectName, string deploymentName, string endpointKey, string endpoint, string projectType)
+            : this((projectName, deploymentName, endpointKey, endpoint, projectType))
         {
         }
 
-        private CluProjectSettings(ValueTuple<string, string, string, string> props)
+        private CluProjectSettings(ValueTuple<string, string, string, string, string> props)
         {
-            var (projectName, deploymentName, endpointKey, endpoint) = props;
+            var (projectName, deploymentName, endpointKey, endpoint, projectType) = props;
 
             if (string.IsNullOrWhiteSpace(projectName))
             {
@@ -57,8 +58,13 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
             DeploymentName = deploymentName;
             EndpointKey = endpointKey;
             Endpoint = endpoint;
+            ProjectType = projectType ?? ProjectType_CLU;
         }
 
+        public string ProjectType { get; set; }
+
+        public const string ProjectType_CLU = "CLU";
+        public const string ProjectType_Orchestration = "Orchestration";
         /// <summary>
         /// Gets or sets the CLU project name.
         /// </summary>

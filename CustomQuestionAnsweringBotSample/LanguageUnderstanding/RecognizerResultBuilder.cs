@@ -1,19 +1,18 @@
 ﻿using global::Microsoft.Bot.Builder;
-using global::Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow.Layouts;
+using Microsoft.Bot.Builder.Dialogs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
 {
     /// <summary>
-    /// A helper class that creates and populate <see cref="RecognizerResult"/> from a <see cref="AnalyzeConversationResult"/> instance.
+    /// A helper class that creates and populate <see cref="RecognizerResult"/> from a <see cref="AnalyzeConversationResponse"/> instance.
     /// </summary>
     internal static class RecognizerResultBuilder
     {
@@ -44,9 +43,14 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         {
         };
 
-        public static async Task<RecognizerResult> BuildRecognizerResultFromCluResponse(Stream cluResultStream, string utterance)
+        public static async Task<RecognizerResult> BuildRecognizerResultFromOrchestratorResponse(Stream cluResultStream, string utterance)
         {
-            var cluResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<AnalyzeConversationResult>(cluResultStream);
+            //var cluResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<OrchestrationResponse>(cluResultStream);
+
+
+            string cluJson = new StreamReader(cluResultStream).ReadToEnd();
+            var cluResponse = System.Text.Json.JsonSerializer.Deserialize<OrchestrationResponse>(cluJson);
+
             var cluResult = cluResponse.result;
 
             var recognizerResult = new RecognizerResult
@@ -59,44 +63,44 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
             // can retrieve responses from other types of projects (Question answering, LUIS or Conversations)
             var projectKind = cluResult.prediction.projectKind;
 
-            if (projectKind == "Conversation")
+            // workflow projects can return results from LUIS, Conversations or QuestionAnswering Projects
+            var orchestrationPrediction = cluResponse.result.prediction;
+
+            var topIntent = orchestrationPrediction.topIntent;
+
+            switch (topIntent)
             {
-                UpdateRecognizerResultFromConversations(cluResult.prediction, recognizerResult);
+                case "LanguageIntent":
+                    UpdateRecognizerResultFromConversations(orchestrationPrediction.intents.LanguageIntent.result.prediction, recognizerResult);
+                    break;
+
+                case "QnAIntent":
+                    UpdateRecognizerResultFromQuestionAnswering(orchestrationPrediction.intents.QnAIntent, recognizerResult);
+                    break;
             }
-            else
+
+            AddProperties(cluResult, recognizerResult);
+
+            return recognizerResult;
+        }
+
+        public static async Task<RecognizerResult> BuildRecognizerResultFromCluResponse(Stream cluResultStream, string utterance)
+        {
+            //var cluResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<AnalyzeConversationResponse>(cluResultStream);
+
+            string cluJson = new StreamReader(cluResultStream).ReadToEnd();
+            var cluResponse = System.Text.Json.JsonSerializer.Deserialize<AnalyzeConversationResponse>(cluJson);
+            
+            
+            var cluResult = cluResponse.result;
+
+            var recognizerResult = new RecognizerResult
             {
-                throw new NotImplementedException();
-                //// workflow projects can return results from LUIS, Conversations or QuestionAnswering Projects
-                //var orchestrationPrediction = (OrchestratorPrediction)cluResultStream.Prediction;
+                Text = utterance,
+                AlteredText = cluResult.query,
+            };
 
-                //// finding name of the target project, then finding the target project type
-                //var respondingProjectName = orchestrationPrediction.TopIntent;
-                //var targetIntentResult = orchestrationPrediction.Intents[respondingProjectName];
-
-                //// targetIntentResult.TargetKind is currently internal but will be changed in next version.
-                //// GetType() is used temporarily.
-
-                //// var targetKind = targetIntentResult.TargetKind;
-                //var targetKind = targetIntentResult.GetType().Name;
-
-                //switch (targetKind)
-                //{
-                //    case "ConversationTargetIntentResult":
-                //        var conversationTargetIntentResult = (ConversationTargetIntentResult)targetIntentResult;
-                //        UpdateRecognizerResultFromConversations(conversationTargetIntentResult.Result.Prediction, recognizerResult);
-                //        break;
-
-                    //case "LuisTargetIntentResult":
-                    //    var luisTargetIntentResult = (LuisTargetIntentResult)targetIntentResult;
-                    //    UpdateRecognizerResultFromLuis(luisTargetIntentResult, recognizerResult);
-                    //    break;
-
-                    //case "QuestionAnsweringTargetIntentResult":
-                    //    var questionAnsweringTargetIntentResult = (QuestionAnsweringTargetIntentResult)targetIntentResult;
-                    //    UpdateRecognizerResultFromQuestionAnswering(questionAnsweringTargetIntentResult, recognizerResult);
-                    //    break;
-                //}
-            }
+            UpdateRecognizerResultFromConversations(cluResult.prediction, recognizerResult);
 
             AddProperties(cluResult, recognizerResult);
 
@@ -126,33 +130,33 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         /// Properties: All answers returned by the Question Answering service.
         /// 
         /// </summary>
-        //private static void UpdateRecognizerResultFromQuestionAnswering(QuestionAnsweringTargetIntentResult qaResult, RecognizerResult recognizerResult)
-        //{
-        //    var qnaAnswers = qaResult.Result.Answers;
+        private static void UpdateRecognizerResultFromQuestionAnswering(QnaIntent qaResult, RecognizerResult recognizerResult)
+        {
+            var qnaAnswers = qaResult.result.answers;
 
-        //    if (qnaAnswers.Count > 0)
-        //    {
-        //        var topAnswer = qnaAnswers[0];
-        //        foreach (var answer in qnaAnswers)
-        //        {
-        //            if (answer.ConfidenceScore > topAnswer.ConfidenceScore)
-        //            {
-        //                topAnswer = answer;
-        //            }
-        //        }
+            if (qnaAnswers.Length > 0)
+            {
+                var topAnswer = qnaAnswers[0];
+                foreach (var answer in qnaAnswers)
+                {
+                    if (answer.confidenceScore > topAnswer.confidenceScore)
+                    {
+                        topAnswer = answer;
+                    }
+                }
 
-        //        recognizerResult.Intents.Add(CluRecognizer.QuestionAnsweringMatchIntent, new IntentScore { Score = topAnswer.ConfidenceScore });
+                recognizerResult.Intents.Add(CustomQuestionAnsweringRecognizer.QnAMatchIntent, new IntentScore { Score = topAnswer.confidenceScore });
 
-        //        var answerArray = new JArray { topAnswer.Answer };
-        //        ObjectPath.SetPathValue(recognizerResult, "entities.answer", answerArray);
+                var answerArray = new JArray { topAnswer.answer };
+                ObjectPath.SetPathValue(recognizerResult, "entities.answer", answerArray);
 
-        //        recognizerResult.Properties["answers"] = qnaAnswers;
-        //    }
-        //    else
-        //    {
-        //        recognizerResult.Intents.Add("None", new IntentScore { Score = 1.0f });
-        //    }
-        //}
+                recognizerResult.Properties["answers"] = qnaAnswers;
+            }
+            else
+            {
+                recognizerResult.Intents.Add("None", new IntentScore { Score = 1.0f });
+            }
+        }
 
         /// <summary>
         /// Returns a RecognizerResult from a luis response received by an orchestration project.
@@ -193,6 +197,35 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
             return returnedObject;
         }
 
+        private static void AddProperties(OrchestrationResult conversationResult, RecognizerResult result)
+        {
+            var topIntent = conversationResult.prediction.topIntent;
+            var projectKind = conversationResult.prediction.projectKind;
+            var detectedLanguage = conversationResult.detectedLanguage;
+
+            result.Properties.Add("projectKind", projectKind);
+
+            if (topIntent != null)
+            {
+                result.Properties.Add("topIntent", topIntent);
+            }
+
+            if (detectedLanguage != null)
+            {
+                result.Properties.Add("detectedLanguage", detectedLanguage);
+            }
+
+            var prediction = conversationResult.prediction;
+            var targetProject = prediction.topIntent switch
+            {
+                "LanguageIntent" => prediction.intents.LanguageIntent.targetProjectKind,
+                "QnAIntent" => prediction.intents.QnAIntent.targetProjectKind,
+                _ => throw new NotImplementedException($"Invalid project type detected: {prediction.topIntent}")
+            };
+
+            result.Properties.Add("targetIntentKind", targetProject);
+        }
+
         private static void AddProperties(ConversationResult conversationResult, RecognizerResult result)
         {
             var topIntent = conversationResult.prediction.topIntent;
@@ -210,188 +243,177 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
             {
                 result.Properties.Add("detectedLanguage", detectedLanguage);
             }
-
-            //if (projectKind == ProjectKind.Workflow)
-            //{
-            //    var prediction = (OrchestratorPrediction)conversationResult.Prediction;
-            //    var targetProject = prediction.Intents[prediction.TopIntent];
-
-            //    // temporarily renamed until next release of CLU SDK
-            //    // var targetProjectKind = targetProject.TargetKind
-            //    var targetProjectKind = targetProject.GetType();
-            //    result.Properties.Add("targetIntentKind", targetProjectKind);
-            //}
         }
 
-        private static IDictionary<string, IntentScore> GetIntents(JObject luisResult)
-        {
-            var result = new Dictionary<string, IntentScore>();
-            var intents = (JObject)luisResult["intents"];
-            if (intents != null)
-            {
-                foreach (var intent in intents)
-                {
-                    result.Add(NormalizeIntent(intent.Key), new IntentScore { Score = intent.Value["score"]?.Value<double>() ?? 0.0 });
-                }
-            }
+        //private static IDictionary<string, IntentScore> GetIntents(JObject luisResult)
+        //{
+        //    var result = new Dictionary<string, IntentScore>();
+        //    var intents = (JObject)luisResult["intents"];
+        //    if (intents != null)
+        //    {
+        //        foreach (var intent in intents)
+        //        {
+        //            result.Add(NormalizeIntent(intent.Key), new IntentScore { Score = intent.Value["score"]?.Value<double>() ?? 0.0 });
+        //        }
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        private static JObject ExtractEntitiesAndMetadata(JObject prediction)
-        {
-            var entities = JObject.FromObject(prediction["entities"]);
-            return (JObject)MapProperties(entities, false);
-        }
+        //private static JObject ExtractEntitiesAndMetadata(JObject prediction)
+        //{
+        //    var entities = JObject.FromObject(prediction["entities"]);
+        //    return (JObject)MapProperties(entities, false);
+        //}
 
-        private static void AddProperties(JObject luis, RecognizerResult result)
-        {
-            var sentiment = luis["sentiment"];
-            if (luis["sentiment"] != null)
-            {
-                result.Properties.Add("sentiment", new JObject(
-                    new JProperty("label", sentiment["label"]),
-                    new JProperty("score", sentiment["score"])));
-            }
-        }
+        //private static void AddProperties(JObject luis, RecognizerResult result)
+        //{
+        //    var sentiment = luis["sentiment"];
+        //    if (luis["sentiment"] != null)
+        //    {
+        //        result.Properties.Add("sentiment", new JObject(
+        //            new JProperty("label", sentiment["label"]),
+        //            new JProperty("score", sentiment["score"])));
+        //    }
+        //}
 
-        private static string NormalizeIntent(string intent)
-        {
-            return intent.Replace('.', '_').Replace(' ', '_');
-        }
+        //private static string NormalizeIntent(string intent)
+        //{
+        //    return intent.Replace('.', '_').Replace(' ', '_');
+        //}
 
-        private static string NormalizeEntity(string entity)
-        {
-            // Type::Role -> Role
-            var type = entity.Split(':').Last();
-            return type.Replace('.', '_').Replace(' ', '_');
-        }
+        //private static string NormalizeEntity(string entity)
+        //{
+        //    // Type::Role -> Role
+        //    var type = entity.Split(':').Last();
+        //    return type.Replace('.', '_').Replace(' ', '_');
+        //}
 
-        private static JToken MapProperties(JToken source, bool inInstance)
-        {
-            var result = source;
-            if (source is JObject obj)
-            {
-                var nobj = new JObject();
+        //private static JToken MapProperties(JToken source, bool inInstance)
+        //{
+        //    var result = source;
+        //    if (source is JObject obj)
+        //    {
+        //        var nobj = new JObject();
 
-                // Fix datetime by reverting to simple timex
-                if (!inInstance && obj.TryGetValue("type", out var type) && type.Type == JTokenType.String && DateSubtypes.Contains(type.Value<string>()))
-                {
-                    var timexs = obj["values"];
-                    var arr = new JArray();
-                    if (timexs != null)
-                    {
-                        var unique = new HashSet<string>();
-                        foreach (var elt in timexs)
-                        {
-                            unique.Add(elt["timex"]?.Value<string>());
-                        }
+        //        // Fix datetime by reverting to simple timex
+        //        if (!inInstance && obj.TryGetValue("type", out var type) && type.Type == JTokenType.String && DateSubtypes.Contains(type.Value<string>()))
+        //        {
+        //            var timexs = obj["values"];
+        //            var arr = new JArray();
+        //            if (timexs != null)
+        //            {
+        //                var unique = new HashSet<string>();
+        //                foreach (var elt in timexs)
+        //                {
+        //                    unique.Add(elt["timex"]?.Value<string>());
+        //                }
 
-                        foreach (var timex in unique)
-                        {
-                            arr.Add(timex);
-                        }
+        //                foreach (var timex in unique)
+        //                {
+        //                    arr.Add(timex);
+        //                }
 
-                        nobj["timex"] = arr;
-                    }
+        //                nobj["timex"] = arr;
+        //            }
 
-                    nobj["type"] = type;
-                }
-                else
-                {
-                    // Map or remove properties
-                    foreach (var property in obj.Properties())
-                    {
-                        var name = NormalizeEntity(property.Name);
-                        var isArray = property.Value.Type == JTokenType.Array;
-                        var isString = property.Value.Type == JTokenType.String;
-                        var isInt = property.Value.Type == JTokenType.Integer;
-                        var val = MapProperties(property.Value, inInstance || property.Name == MetadataKey);
-                        if (name == "datetime" && isArray)
-                        {
-                            nobj.Add("datetimeV1", val);
-                        }
-                        else if (name == "datetimeV2" && isArray)
-                        {
-                            nobj.Add("datetime", val);
-                        }
-                        else if (inInstance)
-                        {
-                            // Correct $instance issues
-                            if (name == "length" && isInt)
-                            {
-                                nobj.Add("endIndex", property.Value.Value<int>() + property.Parent["startIndex"].Value<int>());
-                            }
-                            else if (!((isInt && name == "modelTypeId") ||
-                                       (isString && name == "role")))
-                            {
-                                nobj.Add(name, val);
-                            }
-                        }
-                        else
-                        {
-                            // Correct non-$instance values
-                            if (name == "unit" && isString)
-                            {
-                                nobj.Add("units", val);
-                            }
-                            else
-                            {
-                                nobj.Add(name, val);
-                            }
-                        }
-                    }
-                }
+        //            nobj["type"] = type;
+        //        }
+        //        else
+        //        {
+        //            // Map or remove properties
+        //            foreach (var property in obj.Properties())
+        //            {
+        //                var name = NormalizeEntity(property.Name);
+        //                var isArray = property.Value.Type == JTokenType.Array;
+        //                var isString = property.Value.Type == JTokenType.String;
+        //                var isInt = property.Value.Type == JTokenType.Integer;
+        //                var val = MapProperties(property.Value, inInstance || property.Name == MetadataKey);
+        //                if (name == "datetime" && isArray)
+        //                {
+        //                    nobj.Add("datetimeV1", val);
+        //                }
+        //                else if (name == "datetimeV2" && isArray)
+        //                {
+        //                    nobj.Add("datetime", val);
+        //                }
+        //                else if (inInstance)
+        //                {
+        //                    // Correct $instance issues
+        //                    if (name == "length" && isInt)
+        //                    {
+        //                        nobj.Add("endIndex", property.Value.Value<int>() + property.Parent["startIndex"].Value<int>());
+        //                    }
+        //                    else if (!((isInt && name == "modelTypeId") ||
+        //                               (isString && name == "role")))
+        //                    {
+        //                        nobj.Add(name, val);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    // Correct non-$instance values
+        //                    if (name == "unit" && isString)
+        //                    {
+        //                        nobj.Add("units", val);
+        //                    }
+        //                    else
+        //                    {
+        //                        nobj.Add(name, val);
+        //                    }
+        //                }
+        //            }
+        //        }
 
-                result = nobj;
-            }
-            else if (source is JArray arr)
-            {
-                var narr = new JArray();
-                foreach (var elt in arr)
-                {
-                    // Check if element is geographyV2
-                    var isGeographyV2 = string.Empty;
-                    foreach (var props in elt.Children())
-                    {
-                        var tokenProp = props as JProperty;
-                        if (tokenProp == null)
-                        {
-                            break;
-                        }
+        //        result = nobj;
+        //    }
+        //    else if (source is JArray arr)
+        //    {
+        //        var narr = new JArray();
+        //        foreach (var elt in arr)
+        //        {
+        //            // Check if element is geographyV2
+        //            var isGeographyV2 = string.Empty;
+        //            foreach (var props in elt.Children())
+        //            {
+        //                var tokenProp = props as JProperty;
+        //                if (tokenProp == null)
+        //                {
+        //                    break;
+        //                }
 
-                        if (tokenProp.Name.Contains("type") && GeographySubtypes.Contains(tokenProp.Value.ToString()))
-                        {
-                            isGeographyV2 = tokenProp.Value.ToString();
-                            break;
-                        }
-                    }
+        //                if (tokenProp.Name.Contains("type") && GeographySubtypes.Contains(tokenProp.Value.ToString()))
+        //                {
+        //                    isGeographyV2 = tokenProp.Value.ToString();
+        //                    break;
+        //                }
+        //            }
 
-                    if (!inInstance && !string.IsNullOrEmpty(isGeographyV2))
-                    {
-                        var geoEntity = new JObject();
-                        foreach (var props in elt.Children())
-                        {
-                            var tokenProp = (JProperty)props;
-                            if (tokenProp.Name.Contains("value"))
-                            {
-                                geoEntity.Add("location", tokenProp.Value);
-                            }
-                        }
+        //            if (!inInstance && !string.IsNullOrEmpty(isGeographyV2))
+        //            {
+        //                var geoEntity = new JObject();
+        //                foreach (var props in elt.Children())
+        //                {
+        //                    var tokenProp = (JProperty)props;
+        //                    if (tokenProp.Name.Contains("value"))
+        //                    {
+        //                        geoEntity.Add("location", tokenProp.Value);
+        //                    }
+        //                }
 
-                        geoEntity.Add("type", isGeographyV2);
-                        narr.Add(geoEntity);
-                    }
-                    else
-                    {
-                        narr.Add(MapProperties(elt, inInstance));
-                    }
-                }
+        //                geoEntity.Add("type", isGeographyV2);
+        //                narr.Add(geoEntity);
+        //            }
+        //            else
+        //            {
+        //                narr.Add(MapProperties(elt, inInstance));
+        //            }
+        //        }
 
-                result = narr;
-            }
+        //        result = narr;
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 }

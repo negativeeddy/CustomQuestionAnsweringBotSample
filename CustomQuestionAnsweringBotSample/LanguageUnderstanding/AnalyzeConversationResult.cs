@@ -3,7 +3,7 @@
     // Classes for serializing the body of the CLU Http response
     // defined at https://learn.microsoft.com/en-us/rest/api/language/conversation-analysis-runtime/analyze-conversation
 
-    public class AnalyzeConversationResult
+    public class AnalyzeConversationResponse
     {
         public string kind { get; set; }
         public ConversationResult result { get; set; }

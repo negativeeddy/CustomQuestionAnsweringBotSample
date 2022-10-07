@@ -14,7 +14,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
 {
@@ -526,7 +525,7 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
                 {
                     projectName = _project.ProjectName,
                     deploymentName = _project.DeploymentName,
-                    
+
                     // Use Utf16CodeUnit for strings in .NET.
                     stringIndexType = "Utf16CodeUnit",
                     isLoggingEnabled = _options.IsLoggingEnabled ?? false,
@@ -538,20 +537,23 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
             RequestContent request = RequestContent.Create(data);
             using (var cluResponse = await _conversationsClient.AnalyzeConversationAsync(request, new RequestContext() { CancellationToken = cancellationToken }))
             {
-
-                var recognizerResult = await RecognizerResultBuilder.BuildRecognizerResultFromCluResponse(cluResponse.ContentStream, utterance);
+                RecognizerResult recognizerResult = _project.ProjectType switch
+                {
+                    CluProjectSettings.ProjectType_CLU => await RecognizerResultBuilder.BuildRecognizerResultFromCluResponse(cluResponse.ContentStream, utterance),
+                    CluProjectSettings.ProjectType_Orchestration => await RecognizerResultBuilder.BuildRecognizerResultFromOrchestratorResponse(cluResponse.ContentStream, utterance),
+                    _ => throw new NotImplementedException($"unknown project type {_project.ProjectType}")
+                };
 
                 var traceInfo = JObject.FromObject(
-                    new
+                new
+                {
+                    response = new
                     {
-                        response = new
-                        {
-                            cluResponse.Status,
-                            cluResponse.Headers,
-                            cluResponse.ReasonPhrase
-                        },
-                        recognizerResult,
-                    });
+                        cluResponse.Status,
+                        cluResponse.ReasonPhrase
+                    },
+                    recognizerResult,
+                });
 
                 await turnContext.TraceActivityAsync(CluTraceName, traceInfo, nameof(CluRecognizer), CluTraceLabel, cancellationToken);
 
@@ -559,5 +561,4 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
             }
         }
     }
-
 }
