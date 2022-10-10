@@ -1,7 +1,6 @@
-﻿using Microsoft.Bot.Builder.AI.QnA.Models;
-using System;
+﻿using System;
 
-namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
+namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
 {
     /// <summary>
     /// Data describing a CLU application.

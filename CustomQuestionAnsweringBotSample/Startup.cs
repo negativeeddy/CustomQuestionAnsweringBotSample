@@ -1,4 +1,3 @@
-using CustomQuestionAnsweringBotSample.LanguageUnderstanding;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
@@ -26,9 +25,6 @@ namespace CustomQuestionAnsweringBotSample
             services.AddControllers().AddNewtonsoftJson(options => {
                 options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
             });
-
-            services.AddSingleton<DeclarativeType>((sp) => new DeclarativeType<CustomQuestionAnsweringRecognizer>(CustomQuestionAnsweringRecognizer.Kind));
-            services.AddSingleton<DeclarativeType>((sp) => new DeclarativeType<CluAdaptiveRecognizer>(CluAdaptiveRecognizer.Kind));
 
             services.AddBotRuntime(Configuration);
         }

@@ -1,4 +1,4 @@
-﻿namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
+﻿namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
 {
 
     public class OrchestrationResponse
@@ -61,12 +61,12 @@
         public float confidenceScore { get; set; }
         public int id { get; set; }
         public string source { get; set; }
-        public Metadata metadata { get; set; }
+        public QnaMetadata metadata { get; set; }
         public Dialog dialog { get; set; }
         public Dialog context => dialog;    // return a context object for existing Composer logic
     }
 
-    public class Metadata
+    public class QnaMetadata
     {
         public string system_metadata_qna_edited_manually { get; set; }
     }

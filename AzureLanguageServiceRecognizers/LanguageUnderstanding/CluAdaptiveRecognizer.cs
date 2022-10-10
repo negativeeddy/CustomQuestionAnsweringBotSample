@@ -1,20 +1,17 @@
 ﻿using AdaptiveExpressions.Properties;
-using global::Microsoft.Bot.Builder;
-using global::Microsoft.Bot.Builder.AI.Luis;
-using global::Microsoft.Bot.Builder.Dialogs;
-using global::Microsoft.Rest;
+using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.AI.Luis;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
+namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
 {
     /// <summary>
     /// Class that represents an adaptive LUIS recognizer.
@@ -25,7 +22,7 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         /// The Kind value for this recognizer.
         /// </summary>
         [JsonProperty("$kind")]
-        public const string Kind = "CustomQuestionAnsweringBotSample.CluAdaptiveRecognizer";
+        public const string Kind = "NegativeEddy.CluAdaptiveRecognizer";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CluAdaptiveRecognizer"/> class.
@@ -88,9 +85,9 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         public override async Task<RecognizerResult> RecognizeAsync(DialogContext dialogContext, Activity activity, CancellationToken cancellationToken = default, Dictionary<string, string> telemetryProperties = null, Dictionary<string, double> telemetryMetrics = null)
         {
             var project = new CluProjectSettings(
-                ProjectName.GetValue(dialogContext.State), 
-                DeploymentName.GetValue(dialogContext.State), 
-                EndpointKey.GetValue(dialogContext.State), 
+                ProjectName.GetValue(dialogContext.State),
+                DeploymentName.GetValue(dialogContext.State),
+                EndpointKey.GetValue(dialogContext.State),
                 Endpoint.GetValue(dialogContext.State),
                 ProjectType.GetValue(dialogContext.State));
 
@@ -118,10 +115,10 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
         /// <returns>The dictionary of properties to be logged with telemetry for the recongizer result.</returns>
         protected override Dictionary<string, string> FillRecognizerResultTelemetryProperties(RecognizerResult recognizerResult, Dictionary<string, string> telemetryProperties, DialogContext dc)
         {
-            var (logPersonalInfo, error) = this.LogPersonalInformation.TryGetValue(dc.State);
-            var (projectName, error2) = this.ProjectName.TryGetValue(dc.State);
+            var (logPersonalInfo, error) = LogPersonalInformation.TryGetValue(dc.State);
+            var (projectName, error2) = ProjectName.TryGetValue(dc.State);
 
-            var topTwoIntents = (recognizerResult.Intents.Count > 0) ? recognizerResult.Intents.OrderByDescending(x => x.Value.Score).Take(2).ToArray() : null;
+            var topTwoIntents = recognizerResult.Intents.Count > 0 ? recognizerResult.Intents.OrderByDescending(x => x.Value.Score).Take(2).ToArray() : null;
 
             // Add the intent score and conversation id properties
             var properties = new Dictionary<string, string>()
@@ -129,8 +126,8 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
                 { LuisTelemetryConstants.ApplicationIdProperty, projectName },
                 { LuisTelemetryConstants.IntentProperty, topTwoIntents?[0].Key ?? string.Empty },
                 { LuisTelemetryConstants.IntentScoreProperty, topTwoIntents?[0].Value.Score?.ToString("N2", CultureInfo.InvariantCulture) ?? "0.00" },
-                { LuisTelemetryConstants.Intent2Property, (topTwoIntents?.Length > 1) ? topTwoIntents?[1].Key ?? string.Empty : string.Empty },
-                { LuisTelemetryConstants.IntentScore2Property, (topTwoIntents?.Length > 1) ? topTwoIntents?[1].Value.Score?.ToString("N2", CultureInfo.InvariantCulture) ?? "0.00" : "0.00" },
+                { LuisTelemetryConstants.Intent2Property, topTwoIntents?.Length > 1 ? topTwoIntents?[1].Key ?? string.Empty : string.Empty },
+                { LuisTelemetryConstants.IntentScore2Property, topTwoIntents?.Length > 1 ? topTwoIntents?[1].Value.Score?.ToString("N2", CultureInfo.InvariantCulture) ?? "0.00" : "0.00" },
                 { LuisTelemetryConstants.FromIdProperty, dc.Context.Activity.From.Id },
             };
 

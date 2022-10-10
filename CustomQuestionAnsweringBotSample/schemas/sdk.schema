@@ -339,6 +339,9 @@
     },
     {
       "$ref": "#/definitions/Microsoft.UrlEntityRecognizer"
+    },
+    {
+      "$ref": "#/definitions/NegativeeEddy.CluAdaptiveRecognizer"
     }
   ],
   "definitions": {
@@ -4506,6 +4509,9 @@
         },
         {
           "$ref": "#/definitions/Microsoft.UrlEntityRecognizer"
+        },
+        {
+          "$ref": "#/definitions/NegativeeEddy.CluAdaptiveRecognizer"
         },
         {
           "type": "string"
@@ -9418,6 +9424,65 @@
           "type": "string",
           "pattern": "^[a-zA-Z][a-zA-Z0-9.]*$",
           "const": "Microsoft.UrlEntityRecognizer"
+        },
+        "$designer": {
+          "title": "Designer information",
+          "type": "object",
+          "description": "Extra information for the Bot Framework Composer."
+        }
+      }
+    },
+    "NegativeeEddy.CluAdaptiveRecognizer": {
+      "$role": "implements(Microsoft.IRecognizer)",
+      "title": "CluAdaptiveRecognizer",
+      "description": "this is a test",
+      "type": "object",
+      "$package": {
+        "name": "AzureLanguageServiceRecognizers",
+        "version": "1.0.0-preview4"
+      },
+      "required": [
+        "$kind"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^\\$": {
+          "title": "Tooling property",
+          "description": "Open ended property for tooling."
+        }
+      },
+      "properties": {
+        "projectName": {
+          "type": "string",
+          "title": "projectName",
+          "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+        "deploymentName": {
+          "type": "string",
+          "title": "deploymentName",
+          "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+        "projectType": {
+          "type": "string",
+          "title": "projectType",
+          "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+        "endpointKey": {
+          "type": "string",
+          "title": "endpointKey",
+          "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+        "endpoint": {
+          "type": "string",
+          "title": "endpoint",
+          "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+        "$kind": {
+          "title": "Kind of dialog object",
+          "description": "Defines the valid properties for the component you are configuring (from a dialog .schema file)",
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9.]*$",
+          "const": "NegativeeEddy.CluAdaptiveRecognizer"
         },
         "$designer": {
           "title": "Designer information",

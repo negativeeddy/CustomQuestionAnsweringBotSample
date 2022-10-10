@@ -1,5 +1,4 @@
-﻿using global::Microsoft.Bot.Builder;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow.Layouts;
+﻿using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,7 +8,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
+namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
 {
     /// <summary>
     /// A helper class that creates and populate <see cref="RecognizerResult"/> from a <see cref="AnalyzeConversationResponse"/> instance.
@@ -90,8 +89,8 @@ namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
 
             string cluJson = new StreamReader(cluResultStream).ReadToEnd();
             var cluResponse = System.Text.Json.JsonSerializer.Deserialize<AnalyzeConversationResponse>(cluJson);
-            
-            
+
+
             var cluResult = cluResponse.result;
 
             var recognizerResult = new RecognizerResult

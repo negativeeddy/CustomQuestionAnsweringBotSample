@@ -172,20 +172,11 @@
   "generator": "CustomQuestionAnsweringBotSample.lg",
   "id": "CustomQuestionAnsweringBotSample",
   "recognizer": {
-    "$kind": "CustomQuestionAnsweringBotSample.CluAdaptiveRecognizer",
+    "$kind": "NegativeEddy.CluAdaptiveRecognizer",
     "projectName": "${settings.Clu.projectName}",
     "endpoint": "${settings.Clu.endpoint}",
     "endpointKey": "${settings.Clu.endpointKey}",
-    "projectType": "${settings.Clu.projectType}", // "CLU" (default) or "Orchestration"
+    "projectType": "${settings.Clu.projectType}",
     "deploymentName": "${settings.Clu.deploymentName}"
   }
-
-  //"recognizer": {
-  //  {
-  //    "$kind": "CustomQuestionAnsweringBotSample.CustomQuestionAnsweringRecognizer",
-  //    "hostname": "${settings.CustomQuestionAnswering.hostname}",
-  //    "projectName": "${settings.CustomQuestionAnswering.projectName}",
-  //    "endpointKey": "${settings.CustomQuestionAnswering.endpointKey}"
-  //  }
-
-  }
+}

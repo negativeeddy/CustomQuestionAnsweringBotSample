@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageTags>msbot-component;msbot-recognizer;composer;botframework;botbuilder</PackageTags>
+	<Version>1.0.0-preview4</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <Content Include="**/*.schema" />
+	  <Content Include="**/*.uischema" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Azure.AI.Language.Conversations" Version="1.0.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
+	  <PackageReference Include="Microsoft.Bot.Builder.AI.Luis" Version="4.17.1" />
+	  <PackageReference Include="Microsoft.Bot.Builder.AI.QnA" Version="4.17.1" />
+	  <PackageReference Include="Microsoft.Bot.Builder.Dialogs.Adaptive.Runtime" Version="4.17.1" />
+  </ItemGroup>
+
+</Project>

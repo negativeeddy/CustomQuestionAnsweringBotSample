@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schemas.botframework.com/schemas/component/v1.0/component.schema",
+  "$role": "implements(Microsoft.IRecognizer)",
+  "title": "CluAdaptiveRecognizer",
+  "description": "this is a test",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+     "projectName": {
+            "type": "string",
+            "title": "projectName",
+            "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+         "deploymentName": {
+            "type": "string",
+            "title": "deploymentName",
+            "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+         "projectType": {
+            "type": "string",
+            "title": "projectType",
+            "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+         "endpointKey": {
+            "type": "string",
+            "title": "endpointKey",
+            "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        },
+         "endpoint": {
+            "type": "string",
+            "title": "endpoint",
+            "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+        }
+    }
+}

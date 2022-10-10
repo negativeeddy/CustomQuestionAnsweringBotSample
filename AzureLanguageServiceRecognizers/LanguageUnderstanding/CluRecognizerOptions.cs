@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Threading;
-using Azure.AI.Language.Conversations;
+﻿using Azure.AI.Language.Conversations;
 using Microsoft.Bot.Builder;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
+namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
 {
     public class CluRecognizerOptions
     {

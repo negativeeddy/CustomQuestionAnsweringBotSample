@@ -14,7 +14,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CustomQuestionAnsweringBotSample
+namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
 {
     /// <summary>
     /// This recognizer is a modified copy of the QnAMakerRecognizer from Bot Framework SDK
@@ -303,12 +303,12 @@ namespace CustomQuestionAnsweringBotSample
 
             var options = new QnAMakerOptions
             {
-                ScoreThreshold = (float)this.Threshold.GetValue(dc.State),
-                StrictFilters = this.Metadata?.GetValue(dc.State)?.ToArray(),
-                Top = this.Top.GetValue(dc.State),
+                ScoreThreshold = (float)Threshold.GetValue(dc.State),
+                StrictFilters = Metadata?.GetValue(dc.State)?.ToArray(),
+                Top = Top.GetValue(dc.State),
                 Context = new QnARequestContext(),
                 QnAId = 0,
-                RankerType = this.RankerType?.GetValue(dc.State),
+                RankerType = RankerType?.GetValue(dc.State),
                 IsTest = IsTest,
             };
             //return Task.FromResult<IQnAMakerClient>(new QnAMaker(endpoint, new QnAMakerOptions(), httpClient, TelemetryClient, logPersonalInfo));

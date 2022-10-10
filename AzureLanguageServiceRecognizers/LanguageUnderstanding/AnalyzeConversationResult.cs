@@ -1,4 +1,4 @@
-﻿namespace CustomQuestionAnsweringBotSample.LanguageUnderstanding
+﻿namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
 {
     // Classes for serializing the body of the CLU Http response
     // defined at https://learn.microsoft.com/en-us/rest/api/language/conversation-analysis-runtime/analyze-conversation
