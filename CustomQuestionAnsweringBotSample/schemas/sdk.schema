@@ -341,7 +341,10 @@
       "$ref": "#/definitions/Microsoft.UrlEntityRecognizer"
     },
     {
-      "$ref": "#/definitions/NegativeeEddy.CluAdaptiveRecognizer"
+      "$ref": "#/definitions/NegativeEddy.CluAdaptiveRecognizer"
+    },
+    {
+      "$ref": "#/definitions/NegativeEddy.CustomQuestionAnsweringRecognizer"
     }
   ],
   "definitions": {
@@ -4511,7 +4514,10 @@
           "$ref": "#/definitions/Microsoft.UrlEntityRecognizer"
         },
         {
-          "$ref": "#/definitions/NegativeeEddy.CluAdaptiveRecognizer"
+          "$ref": "#/definitions/NegativeEddy.CluAdaptiveRecognizer"
+        },
+        {
+          "$ref": "#/definitions/NegativeEddy.CustomQuestionAnsweringRecognizer"
         },
         {
           "type": "string"
@@ -9432,18 +9438,22 @@
         }
       }
     },
-    "NegativeeEddy.CluAdaptiveRecognizer": {
+    "NegativeEddy.CluAdaptiveRecognizer": {
       "$role": "implements(Microsoft.IRecognizer)",
       "title": "CluAdaptiveRecognizer",
       "description": "this is a test",
       "type": "object",
-      "$package": {
-        "name": "AzureLanguageServiceRecognizers",
-        "version": "1.0.0-preview4"
-      },
       "required": [
+        "projectName",
+        "deploymentName",
+        "endpointKey",
+        "endpoint",
         "$kind"
       ],
+      "$package": {
+        "name": "AzureLanguageServiceRecognizers",
+        "version": "1.0.0-preview6"
+      },
       "additionalProperties": false,
       "patternProperties": {
         "^\\$": {
@@ -9482,7 +9492,196 @@
           "description": "Defines the valid properties for the component you are configuring (from a dialog .schema file)",
           "type": "string",
           "pattern": "^[a-zA-Z][a-zA-Z0-9.]*$",
-          "const": "NegativeeEddy.CluAdaptiveRecognizer"
+          "const": "NegativeEddy.CluAdaptiveRecognizer"
+        },
+        "$designer": {
+          "title": "Designer information",
+          "type": "object",
+          "description": "Extra information for the Bot Framework Composer."
+        }
+      }
+    },
+    "NegativeEddy.CustomQuestionAnsweringRecognizer": {
+      "$role": "implements(Microsoft.IRecognizer)",
+      "title": "Custom Question Answering recognizer",
+      "description": "Recognizer for generating QnAMatch intents from a KB.",
+      "type": "object",
+      "required": [
+        "knowledgeBaseId",
+        "endpointKey",
+        "hostname",
+        "$kind"
+      ],
+      "$package": {
+        "name": "AzureLanguageServiceRecognizers",
+        "version": "1.0.0-preview6"
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^\\$": {
+          "title": "Tooling property",
+          "description": "Open ended property for tooling."
+        }
+      },
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Id",
+          "description": "Optional unique id using with RecognizerSet."
+        },
+        "projectName": {
+          "$ref": "#/definitions/stringExpression",
+          "title": "projectName",
+          "description": "project name of question answering knowledge base.",
+          "default": "=settings.qna.knowledgebaseid"
+        },
+        "endpointKey": {
+          "$ref": "#/definitions/stringExpression",
+          "title": "Endpoint key",
+          "description": "Endpoint key for the QnA Maker KB.",
+          "default": "=settings.qna.endpointkey"
+        },
+        "hostname": {
+          "$ref": "#/definitions/stringExpression",
+          "title": "Hostname",
+          "description": "Hostname for your QnA Maker service.",
+          "default": "=settings.qna.hostname",
+          "examples": [
+            "https://yourserver.azurewebsites.net/qnamaker"
+          ]
+        },
+        "threshold": {
+          "$ref": "#/definitions/numberExpression",
+          "title": "Threshold",
+          "description": "Threshold score to filter results.",
+          "default": 0.3
+        },
+        "strictFilters": {
+          "$ref": "#/definitions/arrayExpression",
+          "title": "Strict filters",
+          "description": "Metadata filters to use when calling the QnA Maker KB.",
+          "items": {
+            "type": "object",
+            "title": "Metadata filters",
+            "description": "Metadata filters to use when querying QnA Maker KB.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Name to filter on.",
+                "maximum": 100
+              },
+              "value": {
+                "type": "string",
+                "title": "Value",
+                "description": "Value to restrict filter.",
+                "maximum": 100
+              }
+            }
+          }
+        },
+        "top": {
+          "$ref": "#/definitions/numberExpression",
+          "title": "Top",
+          "description": "The number of answers you want to retrieve.",
+          "default": 3
+        },
+        "isTest": {
+          "$ref": "#/definitions/booleanExpression",
+          "title": "Use test environment",
+          "description": "True, if pointing to Test environment, else false.",
+          "examples": [
+            true,
+            "=f(x)"
+          ]
+        },
+        "rankerType": {
+          "title": "Ranker type",
+          "description": "Type of Ranker.",
+          "oneOf": [
+            {
+              "type": "string",
+              "title": "Ranker type",
+              "description": "Type of Ranker.",
+              "enum": [
+                "default",
+                "questionOnly",
+                "autoSuggestQuestion"
+              ],
+              "default": "default"
+            },
+            {
+              "$ref": "#/definitions/equalsExpression"
+            }
+          ]
+        },
+        "strictFiltersJoinOperator": {
+          "$ref": "#/definitions/stringExpression",
+          "title": "StrictFiltersJoinOperator",
+          "description": "Join operator for Strict Filters.",
+          "oneOf": [
+            {
+              "title": "Join operator",
+              "description": "Value of Join Operator to be used as onjuction with Strict Filter values.",
+              "enum": [
+                "AND",
+                "OR"
+              ],
+              "default": "AND"
+            },
+            {
+              "$ref": "#/definitions/equalsExpression"
+            }
+          ]
+        },
+        "includeDialogNameInMetadata": {
+          "$ref": "#/definitions/booleanExpression",
+          "title": "Include dialog name",
+          "description": "When set to false, the dialog name will not be passed to QnAMaker. (default) is true",
+          "default": true,
+          "examples": [
+            true,
+            "=f(x)"
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/arrayExpression",
+          "title": "Metadata filters",
+          "description": "Metadata filters to use when calling the QnA Maker KB.",
+          "items": {
+            "type": "object",
+            "title": "Metadata filter",
+            "description": "Metadata filter to use when calling the QnA Maker KB.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Name of value to test."
+              },
+              "value": {
+                "type": "string",
+                "title": "Value",
+                "description": "Value to filter against."
+              }
+            }
+          }
+        },
+        "context": {
+          "$ref": "#/definitions/objectExpression",
+          "title": "QnA request context",
+          "description": "Context to use for ranking."
+        },
+        "qnaId": {
+          "$ref": "#/definitions/integerExpression",
+          "title": "QnA Id",
+          "description": "A number or expression which is the QnAId to paass to QnAMaker API."
+        },
+        "$kind": {
+          "title": "Kind of dialog object",
+          "description": "Defines the valid properties for the component you are configuring (from a dialog .schema file)",
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9.]*$",
+          "const": "NegativeEddy.CustomQuestionAnsweringRecognizer"
         },
         "$designer": {
           "title": "Designer information",

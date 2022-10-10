@@ -26,7 +26,7 @@ namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
         /// The declarative type for this recognizer.
         /// </summary>
         [JsonProperty("$kind")]
-        public const string Kind = "CustomQuestionAnsweringBotSample.CustomQuestionAnsweringRecognizer";
+        public const string Kind = "NegativeEddy.CustomQuestionAnsweringRecognizer";
 
         /// <summary>
         /// Key used when adding the intent to the <see cref="RecognizerResult"/> intents collection.
