@@ -26,8 +26,6 @@ namespace CustomQuestionAnsweringBotSample
                 options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
             });
 
-            services.AddSingleton<DeclarativeType>((sp) => new DeclarativeType<CustomQuestionAnsweringRecognizer>(CustomQuestionAnsweringRecognizer.Kind));
-
             services.AddBotRuntime(Configuration);
         }
 

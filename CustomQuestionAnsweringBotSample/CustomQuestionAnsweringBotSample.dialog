@@ -135,7 +135,8 @@
                 "id": "KvtURz"
               },
               "eventName": "activityReceived",
-              "eventValue": "=turn.activity"
+              "eventValue": "=turn.activity",
+              "handledProperty": "turn.eventHandled"
             }
           ],
           "elseActions": [
@@ -171,20 +172,11 @@
   "generator": "CustomQuestionAnsweringBotSample.lg",
   "id": "CustomQuestionAnsweringBotSample",
   "recognizer": {
-    "$kind": "Microsoft.RecognizerSet",
-    "recognizers": [
-      {
-        "$kind": "Microsoft.LuisRecognizer",
-        "applicationId": "${settings.CustomLuis.applicationId}",
-        "endpoint": "${settings.CustomLuis.endpoint}",
-        "endpointKey": "${settings.CustomLuis.endpointKey}"
-      },
-      {
-        "$kind": "CustomQuestionAnsweringBotSample.CustomQuestionAnsweringRecognizer",
-        "hostname": "${settings.CustomQuestionAnswering.hostname}",
-        "projectName": "${settings.CustomQuestionAnswering.projectName}",
-        "endpointKey": "${settings.CustomQuestionAnswering.endpointKey}"
-      }
-    ]
+    "$kind": "NegativeEddy.CluAdaptiveRecognizer",
+    "projectName": "${settings.Clu.projectName}",
+    "endpoint": "${settings.Clu.endpoint}",
+    "endpointKey": "${settings.Clu.endpointKey}",
+    "projectType": "${settings.Clu.projectType}",
+    "deploymentName": "${settings.Clu.deploymentName}"
   }
 }
