@@ -5,7 +5,7 @@ This sample shows how to add a custom recognizer to a Bot Composer empty bot in 
 
 ## Quickstart
 1. Install the solution's nuget pacakge to Composer
-  - build the AzureLanguageServiceRecognizers and create a a nuget package ("Right-Click Project -> Pack" in Visual Studio)
+  - build the recognizer project you want to use and create a a nuget package ("Right-Click Project -> Pack" in Visual Studio)
   - Add a new source to Composer's package manager to point to the nuget directory
   - Install the package to your Composer project
 2. Change the root dialog's recognizer type to custom
