@@ -10,7 +10,6 @@ namespace AzureLanguageServiceRecognizers
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<DeclarativeType>((sp) => new DeclarativeType<CustomQuestionAnsweringRecognizer>(CustomQuestionAnsweringRecognizer.Kind));
             services.AddSingleton<DeclarativeType>((sp) => new DeclarativeType<CluAdaptiveRecognizer>(CluAdaptiveRecognizer.Kind));
         }
     }

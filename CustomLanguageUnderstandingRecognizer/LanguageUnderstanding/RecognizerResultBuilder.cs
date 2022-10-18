@@ -15,6 +15,8 @@ namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
     /// </summary>
     internal static class RecognizerResultBuilder
     {
+        public const string QnAMatchIntent = "QnAMatch";
+
         private const string MetadataKey = "$instance";
 
         private static readonly HashSet<string> DateSubtypes = new HashSet<string>
@@ -144,7 +146,7 @@ namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
                     }
                 }
 
-                recognizerResult.Intents.Add(CustomQuestionAnsweringRecognizer.QnAMatchIntent, new IntentScore { Score = topAnswer.confidenceScore });
+                recognizerResult.Intents.Add(QnAMatchIntent, new IntentScore { Score = topAnswer.confidenceScore });
 
                 var answerArray = new JArray { topAnswer.answer };
                 ObjectPath.SetPathValue(recognizerResult, "entities.answer", answerArray);

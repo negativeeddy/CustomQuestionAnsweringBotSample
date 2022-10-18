@@ -172,11 +172,9 @@
   "generator": "CustomQuestionAnsweringBotSample.lg",
   "id": "CustomQuestionAnsweringBotSample",
   "recognizer": {
-    "$kind": "NegativeEddy.CluAdaptiveRecognizer",
-    "projectName": "${settings.Clu.projectName}",
-    "endpoint": "${settings.Clu.endpoint}",
-    "endpointKey": "${settings.Clu.endpointKey}",
-    "projectType": "${settings.Clu.projectType}",
-    "deploymentName": "${settings.Clu.deploymentName}"
+    "$kind": "NegativeEddy.CustomQuestionAnsweringRecognizer",
+    "projectName": "${settings.CustomQuestionAnswering.projectName}",
+    "hostname": "${settings.CustomQuestionAnswering.hostname}",
+    "endpointKey": "${settings.CustomQuestionAnswering.endpointKey}"
   }
 }
