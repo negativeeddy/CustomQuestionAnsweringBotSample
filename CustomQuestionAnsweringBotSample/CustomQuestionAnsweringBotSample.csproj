@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Azure.AI.Language.Conversations" Version="1.0.0" />
-    <PackageReference Include="AzureLanguageServiceRecognizers" Version="1.0.0-preview6" />
+    <PackageReference Include="CustomQuestionAnsweringRecognizer" Version="1.0.0-preview1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
     <PackageReference Include="Microsoft.Bot.Builder.AI.Luis" Version="4.17.1" />
     <PackageReference Include="Microsoft.Bot.Builder.AI.QnA" Version="4.17.1" />

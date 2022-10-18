@@ -14,7 +14,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
+namespace AzureLanguageServiceRecognizers.QuestionAnswering
 {
     /// <summary>
     /// This recognizer is a modified copy of the QnAMakerRecognizer from Bot Framework SDK

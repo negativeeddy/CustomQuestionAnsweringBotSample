@@ -9,7 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureLanguageServiceRecognizers", "AzureLanguageServiceRecognizers\AzureLanguageServiceRecognizers.csproj", "{DD59149A-1C97-4A32-B995-E927D9E99F32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomQuestionAnsweringRecognizer", "CustomQuestionAnsweringRecognizer\CustomQuestionAnsweringRecognizer.csproj", "{244227D4-B430-4752-AB28-472AC3E13A76}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomLanguageUnderstandingRecognizer", "CustomLanguageUnderstandingRecognizer\CustomLanguageUnderstandingRecognizer.csproj", "{EB8E9600-D06F-4484-B08B-1AFD3EECA07F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +23,14 @@ Global
 		{3D67B72A-728C-418A-BDCC-FC437B26B10F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D67B72A-728C-418A-BDCC-FC437B26B10F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D67B72A-728C-418A-BDCC-FC437B26B10F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD59149A-1C97-4A32-B995-E927D9E99F32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD59149A-1C97-4A32-B995-E927D9E99F32}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD59149A-1C97-4A32-B995-E927D9E99F32}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD59149A-1C97-4A32-B995-E927D9E99F32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{244227D4-B430-4752-AB28-472AC3E13A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{244227D4-B430-4752-AB28-472AC3E13A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{244227D4-B430-4752-AB28-472AC3E13A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{244227D4-B430-4752-AB28-472AC3E13A76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB8E9600-D06F-4484-B08B-1AFD3EECA07F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB8E9600-D06F-4484-B08B-1AFD3EECA07F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB8E9600-D06F-4484-B08B-1AFD3EECA07F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB8E9600-D06F-4484-B08B-1AFD3EECA07F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
