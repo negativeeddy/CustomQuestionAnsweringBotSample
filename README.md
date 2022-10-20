@@ -26,7 +26,7 @@ For Conversation Understanding or Orchestration use the CLU recognizer
 ```
 projectType defaults to “CLU” if not set, all other settings are required
 
-or 
+or if using the Question Answering recognizer use the following definition
 
 ```
 {
