@@ -6,8 +6,15 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageTags>msbot-component;msbot-recognizer;composer;botframework;botbuilder</PackageTags>
 		<Version>1.0.0-preview1</Version>
+		<PackageProjectUrl></PackageProjectUrl>
+		<Copyright>Ben Williams 2022</Copyright>
+		<RepositoryUrl>https://github.com/negativeeddy/CustomQuestionAnsweringBotSample</RepositoryUrl>
 		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Title>Conversational Language Understanding Recognizer</Title>
+		<Authors>negativeeddy</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageId>NegativeEddy.Bots.LanguageUnderstandingRecognizer</PackageId>
 	</PropertyGroup>
 
 	<ItemGroup>
