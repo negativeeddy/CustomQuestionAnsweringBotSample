@@ -33,7 +33,7 @@ or if using the Question Answering recognizer use the following definition
  "$kind": "NegativeEddy.CustomQuestionAnsweringRecognizer",
   "hostname": "<your endpoint, including https://>",
   "projectName": "<your project name>",
-  "endpointKey": "<your endpoint key>",
+  "endpointKey": "<your endpoint key>"
 }
 ```
 
