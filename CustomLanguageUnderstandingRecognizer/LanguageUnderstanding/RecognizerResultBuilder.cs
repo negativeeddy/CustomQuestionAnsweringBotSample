@@ -1,4 +1,5 @@
-﻿using Microsoft.Bot.Builder;
+﻿using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime;
+using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -67,22 +68,32 @@ namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
             // workflow projects can return results from LUIS, Conversations or QuestionAnswering Projects
             var orchestrationPrediction = cluResponse.result.prediction;
 
-            var topIntent = orchestrationPrediction.topIntent;
+            var topIntentName = orchestrationPrediction.topIntent;
 
-            switch (topIntent)
+            LanguageIntent topIntent = orchestrationPrediction.intents[topIntentName];
+            switch (topIntent.targetProjectKind)
             {
-                case "LanguageIntent":
-                    UpdateRecognizerResultFromConversations(orchestrationPrediction.intents.LanguageIntent.result.prediction, recognizerResult);
+                case "Conversation":
+                    UpdateRecognizerResultFromConversations(topIntent.result.prediction, recognizerResult);
                     break;
 
-                case "QnAIntent":
-                    UpdateRecognizerResultFromQuestionAnswering(orchestrationPrediction.intents.QnAIntent, recognizerResult);
+                case "QuestionAnswering":
+                    UpdateRecognizerResultFromQuestionAnswering(topIntent, recognizerResult);
+                    break;
+                case "NonLinked":
+                    UpdateRecognizerResultFromUnlinkedIntent(orchestrationPrediction, recognizerResult);
                     break;
             }
 
             AddProperties(cluResult, recognizerResult);
 
             return recognizerResult;
+        }
+
+        private static void UpdateRecognizerResultFromUnlinkedIntent(Prediction prediction, RecognizerResult recognizerResult)
+        {
+            LanguageIntent topIntent = prediction.intents[prediction.topIntent];
+            recognizerResult.Intents.Add(prediction.topIntent, new IntentScore { Score = topIntent.confidenceScore });
         }
 
         public static async Task<RecognizerResult> BuildRecognizerResultFromCluResponse(Stream cluResultStream, string utterance)
@@ -131,7 +142,7 @@ namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
         /// Properties: All answers returned by the Question Answering service.
         /// 
         /// </summary>
-        private static void UpdateRecognizerResultFromQuestionAnswering(QnaIntent qaResult, RecognizerResult recognizerResult)
+        private static void UpdateRecognizerResultFromQuestionAnswering(LanguageIntent qaResult, RecognizerResult recognizerResult)
         {
             var qnaAnswers = qaResult.result.answers;
 
@@ -216,15 +227,7 @@ namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
                 result.Properties.Add("detectedLanguage", detectedLanguage);
             }
 
-            var prediction = conversationResult.prediction;
-            var targetProject = prediction.topIntent switch
-            {
-                "LanguageIntent" => prediction.intents.LanguageIntent.targetProjectKind,
-                "QnAIntent" => prediction.intents.QnAIntent.targetProjectKind,
-                _ => throw new NotImplementedException($"Invalid project type detected: {prediction.topIntent}")
-            };
-
-            result.Properties.Add("targetIntentKind", targetProject);
+            result.Properties.Add("targetIntentKind", conversationResult.prediction.intents[conversationResult.prediction.topIntent].targetProjectKind);
         }
 
         private static void AddProperties(ConversationResult conversationResult, RecognizerResult result)

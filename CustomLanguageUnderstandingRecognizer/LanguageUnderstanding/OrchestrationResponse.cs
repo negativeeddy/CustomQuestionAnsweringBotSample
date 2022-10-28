@@ -1,4 +1,6 @@
-﻿namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
+﻿using System.Collections.Generic;
+
+namespace AzureLanguageServiceRecognizers.LanguageUnderstanding
 {
 
     public class OrchestrationResponse
@@ -18,39 +20,20 @@
     {
         public string topIntent { get; set; }
         public string projectKind { get; set; }
-        public Intents intents { get; set; }
-    }
-
-    public class Intents
-    {
-        public LanguageIntent LanguageIntent { get; set; }
-        public QnaIntent QnAIntent { get; set; }
-        public None None { get; set; }
+        public Dictionary<string, LanguageIntent> intents { get; set; }
     }
 
     public class LanguageIntent
     {
         public float confidenceScore { get; set; }
         public string targetProjectKind { get; set; }
-        public LanguageResult result { get; set; }
+        public IntentDetails result { get; set; }
     }
 
-    public class LanguageResult
+    public class IntentDetails
     {
         public string query { get; set; }
         public ConversationPrediction prediction { get; set; }
-    }
-
-
-    public class QnaIntent
-    {
-        public float confidenceScore { get; set; }
-        public string targetProjectKind { get; set; }
-        public QnaResult result { get; set; }
-    }
-
-    public class QnaResult
-    {
         public QnaAnswer[] answers { get; set; }
     }
 
@@ -82,12 +65,5 @@
         public int displayOrder { get; set; }
         public int qnaId { get; set; }
         public string displayText { get; set; }
-    }
-
-
-    public class None
-    {
-        public float confidenceScore { get; set; }
-        public string targetProjectKind { get; set; }
     }
 }
