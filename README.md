@@ -1,3 +1,7 @@
+# **UPDATE:** The bot framework team has released Recognizers for CQA & CLU. 
+- Nuget packages https://www.nuget.org/packages?q=Microsoft.Bot.Components.Recognizers
+- source https://github.com/microsoft/botframework-components/tree/main/packages/Recognizers
+
 # Composer sample using Azure Language service 
 
 ## Summary
